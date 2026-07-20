@@ -7,7 +7,7 @@ import { ArrowLeft } from "lucide-react";
 import { prisma } from "@/lib/prisma";
 import { SiteHeader } from "@/components/SiteHeader";
 import { SiteFooter } from "@/components/SiteFooter";
-import { PrintButton } from "@/components/PrintButton";
+import { QrPoster } from "@/components/QrPoster";
 
 export const dynamic = "force-dynamic";
 
@@ -16,7 +16,10 @@ export const metadata: Metadata = {
 };
 
 async function getNicheUrl(code: string) {
-  const niche = await prisma.niche.findUnique({ where: { code } });
+  const niche = await prisma.niche.findUnique({
+    where: { code },
+    include: { cemetery: true },
+  });
   if (!niche) return null;
 
   const headerList = await headers();
@@ -38,8 +41,8 @@ export default async function NicheQrPage({
 
   const { niche, url } = result;
   const qrDataUrl = await QRCode.toDataURL(url, {
-    margin: 2,
-    width: 640,
+    margin: 1,
+    width: 720,
     color: { dark: "#241f19", light: "#ffffff" },
   });
 
@@ -49,39 +52,28 @@ export default async function NicheQrPage({
       <main className="flex flex-1 flex-col items-center justify-center gap-6 px-5 py-16 text-center">
         <Link
           href={`/n/${niche.code}`}
-          className="flex items-center gap-1.5 text-sm text-muted hover:text-accent print:hidden"
+          className="flex items-center gap-1.5 text-sm text-muted hover:text-accent"
         >
           <ArrowLeft size={14} /> Volver al nicho
         </Link>
 
-        <h1 className="font-serif-display text-3xl">
-          Código QR — Nicho{" "}
-          <span className="font-technical text-accent">{niche.code}</span>
-        </h1>
-        <p className="max-w-sm text-sm text-muted print:hidden">
-          Imprime este código y colócalo en el nicho para que los visitantes
-          puedan escanearlo con la cámara de su teléfono.
-        </p>
-
-        {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img
-          src={qrDataUrl}
-          alt={`Código QR del nicho ${niche.code}`}
-          className="h-64 w-64 rounded-2xl border border-border bg-white p-4 sm:h-80 sm:w-80"
-        />
-
-        <p className="font-technical text-xs text-muted">{url}</p>
-
-        <div className="flex gap-3 print:hidden">
-          <a
-            href={qrDataUrl}
-            download={`nicho-${niche.code}.png`}
-            className="btn-glow inline-flex items-center gap-2 rounded-full bg-accent px-5 py-2.5 text-sm font-medium text-background hover:opacity-90"
-          >
-            Descargar PNG
-          </a>
-          <PrintButton />
+        <div>
+          <h1 className="font-serif-display text-3xl">
+            Código QR — Nicho{" "}
+            <span className="font-technical text-accent">{niche.code}</span>
+          </h1>
+          <p className="mx-auto mt-2 max-w-sm text-sm text-muted">
+            Descarga, comparte o imprime esta placa y colócala en el nicho para
+            que los visitantes escaneen su historia.
+          </p>
         </div>
+
+        <QrPoster
+          code={niche.code}
+          cemeteryName={niche.cemetery.name}
+          url={url}
+          qrDataUrl={qrDataUrl}
+        />
       </main>
       <SiteFooter />
     </div>
