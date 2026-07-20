@@ -1,0 +1,84 @@
+@import "tailwindcss";
+
+:root {
+  --background: #f6f1e7;
+  --background-elevated: #ffffff;
+  --foreground: #241f19;
+  --muted: #766e60;
+  --border: #e2d8c4;
+  --accent: #a6792c;
+  --accent-strong: #7c581b;
+  --candle: #e8b84b;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --background: #0e0d0b;
+    --background-elevated: #17140f;
+    --foreground: #f2ead9;
+    --muted: #a89d88;
+    --border: #2c2620;
+    --accent: #d9ac4f;
+    --accent-strong: #e8c377;
+    --candle: #f3c563;
+  }
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-background-elevated: var(--background-elevated);
+  --color-foreground: var(--foreground);
+  --color-muted: var(--muted);
+  --color-border: var(--border);
+  --color-accent: var(--accent);
+  --color-accent-strong: var(--accent-strong);
+  --color-candle: var(--candle);
+  --font-serif: var(--font-display);
+  --font-sans: var(--font-body);
+}
+
+* {
+  border-color: var(--border);
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-body), ui-sans-serif, system-ui, sans-serif;
+}
+
+.font-serif-display {
+  font-family: var(--font-display), "Times New Roman", serif;
+}
+
+@keyframes flicker {
+  0%, 100% { opacity: 1; transform: scaleY(1) translateX(0); }
+  25% { opacity: 0.85; transform: scaleY(0.96) translateX(-0.5px); }
+  50% { opacity: 0.95; transform: scaleY(1.04) translateX(0.5px); }
+  75% { opacity: 0.8; transform: scaleY(0.98) translateX(-0.3px); }
+}
+
+.animate-flicker {
+  animation: flicker 2.6s ease-in-out infinite;
+  transform-origin: bottom center;
+}
+
+@keyframes drift {
+  0% { transform: translateY(0) translateX(0); opacity: 0; }
+  10% { opacity: 0.6; }
+  90% { opacity: 0.3; }
+  100% { transform: translateY(-120px) translateX(10px); opacity: 0; }
+}
+
+.animate-drift {
+  animation: drift 8s ease-in infinite;
+}
+
+::selection {
+  background: var(--candle);
+  color: #241f19;
+}

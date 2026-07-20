@@ -1,0 +1,102 @@
+// Prisma schema for Memorials
+// A QR code on a cemetery niche points to /n/[code], which resolves to a Niche
+// and lists every Person interred there, each with their own memorial page.
+
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model Cemetery {
+  id        String   @id @default(cuid())
+  name      String
+  city      String?
+  country   String?
+  address   String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  niches Niche[]
+
+  @@map("cemeteries")
+}
+
+model Niche {
+  id          String   @id @default(cuid())
+  /// Short human-readable code encoded in the QR code, e.g. "A-104". Used in the public URL /n/[code].
+  code        String   @unique
+  section     String?
+  row         String?
+  number      String?
+  latitude    Float?
+  longitude   Float?
+  note        String?
+  cemeteryId  String
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  cemetery Cemetery @relation(fields: [cemeteryId], references: [id], onDelete: Cascade)
+  people   Person[]
+
+  @@index([cemeteryId])
+  @@map("niches")
+}
+
+model Person {
+  id          String    @id @default(cuid())
+  firstName   String
+  lastName    String
+  nickname    String?
+  birthDate   DateTime?
+  deathDate   DateTime?
+  epitaph     String?
+  biography   String?
+  coverPhotoUrl String?
+  nicheId     String
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  niche    Niche     @relation(fields: [nicheId], references: [id], onDelete: Cascade)
+  photos   Photo[]
+  tributes Tribute[]
+
+  @@index([nicheId])
+  @@map("people")
+}
+
+model Photo {
+  id        String   @id @default(cuid())
+  url       String
+  caption   String?
+  order     Int      @default(0)
+  personId  String
+  createdAt DateTime @default(now())
+
+  person Person @relation(fields: [personId], references: [id], onDelete: Cascade)
+
+  @@index([personId])
+  @@map("photos")
+}
+
+enum TributeType {
+  CANDLE
+  MESSAGE
+}
+
+model Tribute {
+  id         String      @id @default(cuid())
+  type       TributeType @default(MESSAGE)
+  authorName String?
+  message    String?
+  personId   String
+  createdAt  DateTime    @default(now())
+
+  person Person @relation(fields: [personId], references: [id], onDelete: Cascade)
+
+  @@index([personId])
+  @@map("tributes")
+}
