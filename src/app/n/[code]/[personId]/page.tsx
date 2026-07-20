@@ -56,6 +56,9 @@ export default async function PersonPage({
   const lifespan = formatLifespan(person.birthDate, person.deathDate);
   const age = lifespanYears(person.birthDate, person.deathDate);
   const siblings = person.niche.people.filter((p) => p.id !== person.id);
+  const photos = person.photos.filter(
+    (photo): photo is typeof photo & { url: string } => Boolean(photo.url)
+  );
 
   const tributes: TributeData[] = person.tributes.map((t) => ({
     id: t.id,
@@ -147,12 +150,12 @@ export default async function PersonPage({
           </section>
         )}
 
-        {person.photos.length > 0 && (
+        {photos.length > 0 && (
           <section className="border-b border-border/80 px-5 py-14">
             <div className="mx-auto max-w-2xl">
               <h2 className="font-serif-display text-2xl">Fotografías</h2>
               <div className="mt-5 grid grid-cols-2 gap-3 sm:grid-cols-3">
-                {person.photos.map((photo) => (
+                {photos.map((photo) => (
                   // eslint-disable-next-line @next/next/no-img-element
                   <img
                     key={photo.id}

@@ -70,7 +70,13 @@ model Person {
 
 model Photo {
   id        String   @id @default(cuid())
-  url       String
+  /// Public URL used to render the photo. For uploaded photos this points at
+  /// /api/photos/[id] (bytes stored in `data`); for linked photos it's an external URL.
+  url       String?
+  /// Raw image bytes for uploaded photos, served via /api/photos/[id]. Null for URL-only photos.
+  data      Bytes?
+  /// MIME type of the uploaded bytes, e.g. "image/jpeg". Null for URL-only photos.
+  mimeType  String?
   caption   String?
   order     Int      @default(0)
   personId  String
