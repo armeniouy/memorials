@@ -27,25 +27,26 @@ export const metadata: Metadata = {
     template: "%s · Memorials",
   },
   description:
-    "Escanea el código QR de un nicho y descubre la historia de quienes descansan ahí.",
+    "Escanea el código QR de un lugar y descubre la historia de quienes descansan ahí.",
 };
 
+// Un solo color, el del tema base: ya no seguimos la preferencia del sistema.
 export const viewport: Viewport = {
-  themeColor: [
-    { media: "(prefers-color-scheme: light)", color: "#f3f1ee" },
-    { media: "(prefers-color-scheme: dark)", color: "#050506" },
-  ],
+  themeColor: "#050506",
 };
 
+// La primera visita siempre arranca en oscuro, sin mirar la preferencia del
+// sistema: es el tono que le corresponde a un memorial. Si la persona usa el
+// interruptor, esa elección queda guardada y manda a partir de entonces.
 const themeInitScript = `
 (function () {
   try {
     var stored = localStorage.getItem("memorials-theme");
-    var theme = stored === "light" || stored === "dark"
-      ? stored
-      : (window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light");
+    var theme = stored === "light" || stored === "dark" ? stored : "dark";
     document.documentElement.setAttribute("data-theme", theme);
-  } catch (e) {}
+  } catch (e) {
+    document.documentElement.setAttribute("data-theme", "dark");
+  }
 })();
 `;
 

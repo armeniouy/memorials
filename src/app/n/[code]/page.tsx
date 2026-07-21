@@ -7,6 +7,7 @@ import { SiteHeader } from "@/components/SiteHeader";
 import { SiteFooter } from "@/components/SiteFooter";
 import { PersonCard } from "@/components/PersonCard";
 import { AmbientGlow } from "@/components/AmbientGlow";
+import { photoSelect } from "@/lib/photos";
 
 export const dynamic = "force-dynamic";
 
@@ -17,6 +18,9 @@ async function getNiche(code: string) {
       cemetery: true,
       people: {
         orderBy: { createdAt: "asc" },
+        include: {
+          photos: { orderBy: { order: "asc" }, take: 1, select: photoSelect },
+        },
       },
     },
   });
@@ -29,10 +33,10 @@ export async function generateMetadata({
 }): Promise<Metadata> {
   const { code } = await params;
   const niche = await getNiche(code);
-  if (!niche) return { title: "Nicho no encontrado" };
+  if (!niche) return { title: "Lugar no encontrado" };
   return {
-    title: `Nicho ${niche.code} · ${niche.cemetery.name}`,
-    description: `Personas que descansan en el nicho ${niche.code}, ${niche.cemetery.name}.`,
+    title: `Lugar ${niche.code} · ${niche.cemetery.name}`,
+    description: `Personas que descansan en el lugar ${niche.code}, ${niche.cemetery.name}.`,
   };
 }
 
@@ -63,7 +67,7 @@ export default async function NichePage({
               <MapPin size={13} /> {niche.cemetery.name}
             </span>
             <h1 className="mt-5 font-serif-display text-4xl">
-              Nicho <span className="font-technical text-accent">{niche.code}</span>
+              Lugar <span className="font-technical text-accent">{niche.code}</span>
             </h1>
             {(locationParts.length > 0 || niche.note) && (
               <p className="mt-2 text-muted">
@@ -87,7 +91,7 @@ export default async function NichePage({
             </div>
             {niche.people.length === 0 && (
               <p className="text-center text-muted">
-                Aún no se ha agregado información para este nicho.
+                Aún no se ha agregado información para este lugar.
               </p>
             )}
           </div>
@@ -97,7 +101,7 @@ export default async function NichePage({
               href={`/n/${niche.code}/qr`}
               className="inline-flex items-center gap-2 text-sm text-muted hover:text-accent"
             >
-              <QrCode size={15} /> Ver código QR de este nicho
+              <QrCode size={15} /> Ver código QR de este lugar
             </Link>
           </div>
         </div>

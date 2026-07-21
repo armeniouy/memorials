@@ -1,38 +1,24 @@
 @import "tailwindcss";
 
+/* Oscuro es el tema base: la primera visita arranca así, sin consultar la
+   preferencia del sistema. Al estar en :root no depende de JavaScript, así que
+   no hay destello claro antes de que corra el script del tema. */
 :root {
-  --background: #f3f1ee;
-  --background-elevated: #ffffff;
-  --foreground: #14140f;
-  --muted: #6b6a63;
-  --border: #dedad2;
-  --accent: #a6792c;
-  --accent-strong: #7c581b;
-  --candle: #c8912f;
-  --glow: #6d5bd0;
-  --glow-soft: rgba(109, 91, 208, 0.12);
-  --grid-line: rgba(20, 20, 15, 0.05);
-  --card-shadow: rgba(20, 20, 15, 0.06);
+  --background: #050506;
+  --background-elevated: #0d0d10;
+  --foreground: #eeeceb;
+  --muted: #8b8a92;
+  --border: #211f26;
+  --accent: #e8c377;
+  --accent-strong: #f3d795;
+  --candle: #f3c563;
+  --glow: #8b7cf6;
+  --glow-soft: rgba(139, 124, 246, 0.16);
+  --grid-line: rgba(255, 255, 255, 0.05);
+  --card-shadow: rgba(0, 0, 0, 0.4);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #050506;
-    --background-elevated: #0d0d10;
-    --foreground: #eeeceb;
-    --muted: #8b8a92;
-    --border: #211f26;
-    --accent: #e8c377;
-    --accent-strong: #f3d795;
-    --candle: #f3c563;
-    --glow: #8b7cf6;
-    --glow-soft: rgba(139, 124, 246, 0.16);
-    --grid-line: rgba(255, 255, 255, 0.05);
-    --card-shadow: rgba(0, 0, 0, 0.4);
-  }
-}
-
-/* Explicit overrides from the theme toggle always win over the media query. */
+/* Solo el interruptor pasa a claro; volver a "dark" recae en :root. */
 :root[data-theme="light"] {
   --background: #f3f1ee;
   --background-elevated: #ffffff;
@@ -46,21 +32,6 @@
   --glow-soft: rgba(109, 91, 208, 0.12);
   --grid-line: rgba(20, 20, 15, 0.05);
   --card-shadow: rgba(20, 20, 15, 0.06);
-}
-
-:root[data-theme="dark"] {
-  --background: #050506;
-  --background-elevated: #0d0d10;
-  --foreground: #eeeceb;
-  --muted: #8b8a92;
-  --border: #211f26;
-  --accent: #e8c377;
-  --accent-strong: #f3d795;
-  --candle: #f3c563;
-  --glow: #8b7cf6;
-  --glow-soft: rgba(139, 124, 246, 0.16);
-  --grid-line: rgba(255, 255, 255, 0.05);
-  --card-shadow: rgba(0, 0, 0, 0.4);
 }
 
 @theme inline {
@@ -82,9 +53,15 @@
   border-color: var(--border);
 }
 
+/* Acompaña al tema base para que scrollbars y controles nativos salgan
+   oscuros; el interruptor lo pasa a claro junto con el resto. */
 html {
   scroll-behavior: smooth;
-  color-scheme: light dark;
+  color-scheme: dark;
+}
+
+html[data-theme="light"] {
+  color-scheme: light;
 }
 
 body {

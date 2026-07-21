@@ -1,5 +1,7 @@
 import Link from "next/link";
 import { formatLifespan, fullName } from "@/lib/format";
+import { PersonAvatar } from "@/components/PersonAvatar";
+import type { PhotoRef } from "@/lib/photos";
 
 type PersonCardData = {
   id: string;
@@ -10,6 +12,7 @@ type PersonCardData = {
   deathDate: Date | string | null;
   epitaph: string | null;
   coverPhotoUrl: string | null;
+  photos?: PhotoRef[];
 };
 
 export function PersonCard({
@@ -26,20 +29,11 @@ export function PersonCard({
       href={`/n/${nicheCode}/${person.id}`}
       className="card-glass group flex items-center gap-4 rounded-2xl p-4 transition-all hover:-translate-y-0.5"
     >
-      <div className="h-16 w-16 shrink-0 overflow-hidden rounded-full border border-border bg-black/5">
-        {person.coverPhotoUrl ? (
-          // eslint-disable-next-line @next/next/no-img-element
-          <img
-            src={person.coverPhotoUrl}
-            alt={fullName(person)}
-            className="h-full w-full object-cover"
-          />
-        ) : (
-          <div className="flex h-full w-full items-center justify-center font-serif-display text-xl text-muted">
-            {person.firstName[0]}
-          </div>
-        )}
-      </div>
+      <PersonAvatar
+        person={person}
+        className="h-16 w-16"
+        initialClassName="text-xl"
+      />
       <div className="min-w-0 flex-1">
         <p className="font-serif-display text-xl leading-tight">
           {fullName(person)}

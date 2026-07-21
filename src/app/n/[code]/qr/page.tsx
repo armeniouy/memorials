@@ -12,7 +12,7 @@ import { PrintButton } from "@/components/PrintButton";
 export const dynamic = "force-dynamic";
 
 export const metadata: Metadata = {
-  title: "Código QR del nicho",
+  title: "Código QR del lugar",
 };
 
 async function getNicheUrl(code: string) {
@@ -45,28 +45,28 @@ export default async function NicheQrPage({
 
   return (
     <div className="flex flex-1 flex-col">
-      <SiteHeader breadcrumb={`Nicho ${niche.code}`} />
+      <SiteHeader breadcrumb={`Lugar ${niche.code}`} />
       <main className="flex flex-1 flex-col items-center justify-center gap-6 px-5 py-16 text-center">
         <Link
           href={`/n/${niche.code}`}
           className="flex items-center gap-1.5 text-sm text-muted hover:text-accent print:hidden"
         >
-          <ArrowLeft size={14} /> Volver al nicho
+          <ArrowLeft size={14} /> Volver al lugar
         </Link>
 
         <h1 className="font-serif-display text-3xl">
-          Código QR — Nicho{" "}
+          Código QR — Lugar{" "}
           <span className="font-technical text-accent">{niche.code}</span>
         </h1>
         <p className="max-w-sm text-sm text-muted print:hidden">
-          Imprime este código y colócalo en el nicho para que los visitantes
+          Imprime este código y colócalo en el lugar para que los visitantes
           puedan escanearlo con la cámara de su teléfono.
         </p>
 
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img
           src={qrDataUrl}
-          alt={`Código QR del nicho ${niche.code}`}
+          alt={`Código QR del lugar ${niche.code}`}
           className="h-64 w-64 rounded-2xl border border-border bg-white p-4 sm:h-80 sm:w-80"
         />
 
@@ -75,7 +75,7 @@ export default async function NicheQrPage({
         <div className="flex gap-3 print:hidden">
           <a
             href={qrDataUrl}
-            download={`nicho-${niche.code}.png`}
+            download={`lugar-${niche.code}.png`}
             className="btn-glow inline-flex items-center gap-2 rounded-full bg-accent px-5 py-2.5 text-sm font-medium text-background hover:opacity-90"
           >
             Descargar PNG

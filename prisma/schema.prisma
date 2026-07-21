@@ -60,17 +60,51 @@ model Person {
   createdAt   DateTime  @default(now())
   updatedAt   DateTime  @updatedAt
 
-  niche    Niche     @relation(fields: [nicheId], references: [id], onDelete: Cascade)
-  photos   Photo[]
-  tributes Tribute[]
+  niche       Niche        @relation(fields: [nicheId], references: [id], onDelete: Cascade)
+  photos      Photo[]
+  tributes    Tribute[]
+  socialLinks SocialLink[]
 
   @@index([nicheId])
   @@map("people")
 }
 
+enum SocialPlatform {
+  INSTAGRAM
+  FACEBOOK
+  X
+  TIKTOK
+  YOUTUBE
+  SPOTIFY
+  THREADS
+  LINKEDIN
+  WEBSITE
+}
+
+/// Perfiles públicos de la persona, enlazados con el ícono de cada plataforma.
+model SocialLink {
+  id        String         @id @default(cuid())
+  platform  SocialPlatform
+  url       String
+  /// Etiqueta opcional, ej. el usuario "@chayito". Si falta se muestra el nombre de la plataforma.
+  label     String?
+  order     Int            @default(0)
+  personId  String
+  createdAt DateTime       @default(now())
+
+  person Person @relation(fields: [personId], references: [id], onDelete: Cascade)
+
+  @@index([personId])
+  @@map("social_links")
+}
+
 model Photo {
   id        String   @id @default(cuid())
-  url       String
+  /// URL externa de la imagen. Nula cuando el archivo se subió y vive en `data`.
+  url       String?
+  /// Bytes de la imagen cuando fue subida en lugar de enlazada.
+  data      Bytes?
+  mimeType  String?
   caption   String?
   order     Int      @default(0)
   personId  String

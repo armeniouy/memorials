@@ -1,7 +1,7 @@
 import { QrCode, ScanLine, BookHeart, Flame } from "lucide-react";
 import { SiteHeader } from "@/components/SiteHeader";
 import { SiteFooter } from "@/components/SiteFooter";
-import { SearchNicheForm } from "@/components/SearchNicheForm";
+import { SearchForm } from "@/components/SearchForm";
 import { AmbientGlow } from "@/components/AmbientGlow";
 
 const steps = [
@@ -9,7 +9,7 @@ const steps = [
     icon: QrCode,
     title: "Coloca un código QR",
     description:
-      "Cada nicho o lote recibe un código único que enlaza a su página conmemorativa.",
+      "Cada lugar recibe un código único que enlaza a su página conmemorativa.",
   },
   {
     icon: ScanLine,
@@ -43,7 +43,7 @@ export default function Home() {
               Un homenaje digital
             </span>
             <h1 className="font-serif-display text-4xl leading-tight sm:text-6xl">
-              Cada nicho tiene una historia.
+              Cada lugar tiene una historia.
               <br />
               <span className="italic text-accent">Ayúdanos a contarla.</span>
             </h1>
@@ -52,7 +52,7 @@ export default function Home() {
               descansan ahí: su historia, sus fotos y los recuerdos que
               dejaron en quienes los amaron.
             </p>
-            <SearchNicheForm />
+            <SearchForm />
           </div>
         </section>
 
@@ -84,13 +84,13 @@ export default function Home() {
         <section className="border-t border-border/80 px-5 py-20">
           <div className="card-glass glow-ring relative mx-auto max-w-3xl rounded-3xl p-10 text-center">
             <h2 className="font-serif-display text-3xl">
-              ¿Tienes el código de un nicho?
+              ¿Buscás a alguien en particular?
             </h2>
             <p className="mt-3 text-muted">
-              Escríbelo abajo para ver la página conmemorativa directamente.
+              Escribí su nombre, o el código del lugar si lo tenés a mano.
             </p>
             <div className="mt-6 flex justify-center">
-              <SearchNicheForm />
+              <SearchForm />
             </div>
           </div>
         </section>

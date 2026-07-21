@@ -11,7 +11,7 @@ export default function NotFound() {
         <Flame size={28} className="text-candle" strokeWidth={1.5} />
         <h1 className="font-serif-display text-3xl">Página no encontrada</h1>
         <p className="max-w-md text-muted">
-          Esta página no existe. Vuelve al inicio para buscar un nicho.
+          Esta página no existe. Vuelve al inicio para buscar un lugar.
         </p>
         <Link
           href="/"

@@ -4,15 +4,16 @@ import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { Search } from "lucide-react";
 
-export function SearchNicheForm() {
-  const [code, setCode] = useState("");
+export function SearchForm({ initialQuery = "" }: { initialQuery?: string }) {
+  const [query, setQuery] = useState(initialQuery);
   const router = useRouter();
 
   function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
-    const trimmed = code.trim();
+    const trimmed = query.trim();
     if (!trimmed) return;
-    router.push(`/n/${encodeURIComponent(trimmed)}`);
+    // /buscar resuelve ambos casos: si es un código exacto redirige al lugar.
+    router.push(`/buscar?q=${encodeURIComponent(trimmed)}`);
   }
 
   return (
@@ -23,9 +24,10 @@ export function SearchNicheForm() {
       <Search size={18} className="shrink-0 text-muted" />
       <input
         type="text"
-        value={code}
-        onChange={(e) => setCode(e.target.value)}
-        placeholder="Código del nicho, ej. A-104"
+        value={query}
+        onChange={(e) => setQuery(e.target.value)}
+        placeholder="Nombre o código, ej. Rosa o A-104"
+        aria-label="Buscar por nombre o código de lugar"
         className="w-full bg-transparent py-2 text-sm outline-none placeholder:text-muted/70"
       />
       <button
