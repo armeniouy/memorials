@@ -4,6 +4,7 @@ import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { prisma } from "@/lib/prisma";
 import { requireUser } from "@/lib/auth";
+import { parseCoordinates } from "@/lib/coordinates";
 
 /**
  * Server Actions backing the admin panel under /admin.
@@ -31,13 +32,6 @@ function date(fd: FormData, key: string): Date | null {
   if (!v) return null;
   const d = new Date(v);
   return Number.isNaN(d.getTime()) ? null : d;
-}
-
-function num(fd: FormData, key: string): number | null {
-  const v = str(fd, key);
-  if (v === null) return null;
-  const n = Number(v);
-  return Number.isFinite(n) ? n : null;
 }
 
 function fail(path: string, message: string): never {
@@ -108,6 +102,9 @@ export async function createNiche(fd: FormData) {
     fail(`/admin/cemeteries/${cemeteryId}`, `Ya existe un nicho con el código "${code}".`);
   }
 
+  const coords = parseCoordinates(str(fd, "coordinates"));
+  if (!coords.ok) fail(`/admin/cemeteries/${cemeteryId}`, coords.error);
+
   const niche = await prisma.niche.create({
     data: {
       code,
@@ -116,8 +113,8 @@ export async function createNiche(fd: FormData) {
       row: str(fd, "row"),
       number: str(fd, "number"),
       note: str(fd, "note"),
-      latitude: num(fd, "latitude"),
-      longitude: num(fd, "longitude"),
+      latitude: coords.value?.latitude ?? null,
+      longitude: coords.value?.longitude ?? null,
     },
   });
 
@@ -136,6 +133,9 @@ export async function updateNiche(fd: FormData) {
     fail(`/admin/niches/${id}`, `El código "${code}" ya está en uso por otro nicho.`);
   }
 
+  const coords = parseCoordinates(str(fd, "coordinates"));
+  if (!coords.ok) fail(`/admin/niches/${id}`, coords.error);
+
   await prisma.niche.update({
     where: { id },
     data: {
@@ -144,8 +144,8 @@ export async function updateNiche(fd: FormData) {
       row: str(fd, "row"),
       number: str(fd, "number"),
       note: str(fd, "note"),
-      latitude: num(fd, "latitude"),
-      longitude: num(fd, "longitude"),
+      latitude: coords.value?.latitude ?? null,
+      longitude: coords.value?.longitude ?? null,
     },
   });
 

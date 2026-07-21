@@ -67,6 +67,40 @@ export function Textarea({
   );
 }
 
+export function Select({
+  label,
+  name,
+  options,
+  defaultValue,
+  hint,
+}: {
+  label: string;
+  name: string;
+  options: { value: string; label: string }[];
+  defaultValue?: string;
+  hint?: string;
+}) {
+  return (
+    <label className="block">
+      <span className="mb-1 block font-technical text-xs uppercase tracking-wider text-muted">
+        {label}
+      </span>
+      <select
+        name={name}
+        defaultValue={defaultValue}
+        className={inputClass}
+      >
+        {options.map((o) => (
+          <option key={o.value} value={o.value}>
+            {o.label}
+          </option>
+        ))}
+      </select>
+      {hint && <span className="mt-1 block text-xs text-muted/80">{hint}</span>}
+    </label>
+  );
+}
+
 export function SectionCard({
   title,
   children,

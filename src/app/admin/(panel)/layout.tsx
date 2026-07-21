@@ -33,7 +33,7 @@ export default async function PanelLayout({
             <span className="hidden sm:inline">Administración</span>
           </Link>
 
-          <AdminNav />
+          <AdminNav canManageUsers={session.role === "ADMIN"} />
 
           <div className="flex shrink-0 items-center gap-3">
             <Link

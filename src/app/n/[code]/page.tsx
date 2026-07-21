@@ -6,6 +6,7 @@ import { prisma } from "@/lib/prisma";
 import { SiteHeader } from "@/components/SiteHeader";
 import { SiteFooter } from "@/components/SiteFooter";
 import { PersonCard } from "@/components/PersonCard";
+import { MapLink } from "@/components/MapLink";
 import { AmbientGlow } from "@/components/AmbientGlow";
 import { photoSelect } from "@/lib/photos";
 
@@ -76,6 +77,14 @@ export default async function NichePage({
                 {niche.note}
               </p>
             )}
+            <div className="mt-4 flex justify-center">
+              <MapLink
+                latitude={niche.latitude}
+                longitude={niche.longitude}
+                label="Cómo llegar"
+                className="inline-flex items-center gap-2 rounded-full border border-border px-4 py-2 text-sm text-muted transition-colors hover:border-accent hover:text-accent"
+              />
+            </div>
           </div>
 
           <div className="mt-12 space-y-4">

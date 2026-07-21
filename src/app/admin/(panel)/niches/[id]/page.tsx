@@ -3,6 +3,8 @@ import { notFound } from "next/navigation";
 import { ArrowLeft, ChevronRight, Plus, QrCode, Trash2, User } from "lucide-react";
 import { prisma } from "@/lib/prisma";
 import { requireUser } from "@/lib/auth";
+import { MapLink } from "@/components/MapLink";
+import { formatCoordinates } from "@/lib/coordinates";
 import { createPerson, deleteNiche, updateNiche } from "@/lib/admin-actions";
 import { fullName } from "@/lib/format";
 import { Banner, Field, SectionCard, Textarea } from "@/components/admin/ui";
@@ -70,10 +72,18 @@ export default async function NicheAdminPage({
             <Field label="Fila" name="row" defaultValue={niche.row} />
             <Field label="Número" name="number" defaultValue={niche.number} />
           </div>
-          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-            <Field label="Latitud" name="latitude" defaultValue={niche.latitude} />
-            <Field label="Longitud" name="longitude" defaultValue={niche.longitude} />
-          </div>
+          <Field
+            label="Coordenadas"
+            name="coordinates"
+            defaultValue={formatCoordinates(niche.latitude, niche.longitude)}
+            placeholder="-34.858118, -56.228550"
+            hint="Pegá acá lo que copiás de Google Maps. Dejalo vacío para quitar la ubicación."
+          />
+          <MapLink
+            latitude={niche.latitude}
+            longitude={niche.longitude}
+            label="Comprobar la ubicación en Google Maps"
+          />
           <Field label="Nota" name="note" defaultValue={niche.note} />
           <SubmitButton>Guardar cambios</SubmitButton>
         </form>

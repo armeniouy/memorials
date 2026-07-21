@@ -96,10 +96,12 @@ export default async function CemeteryAdminPage({
             <Field label="Fila" name="row" placeholder="3" />
             <Field label="Número" name="number" placeholder="104" />
           </div>
-          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-            <Field label="Latitud" name="latitude" placeholder="25.6866" />
-            <Field label="Longitud" name="longitude" placeholder="-100.3161" />
-          </div>
+          <Field
+            label="Coordenadas"
+            name="coordinates"
+            placeholder="-34.858118, -56.228550"
+            hint="Opcional. Pegá acá lo que copiás de Google Maps."
+          />
           <Field label="Nota" name="note" placeholder="Referencia o comentario interno" />
           <SubmitButton>
             <Plus size={15} /> Crear nicho

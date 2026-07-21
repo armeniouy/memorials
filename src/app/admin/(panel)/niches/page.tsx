@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { ChevronRight, Grid3x3 } from "lucide-react";
+import { ChevronRight, Grid3x3, Map } from "lucide-react";
 import { prisma } from "@/lib/prisma";
 import { requireUser } from "@/lib/auth";
 import { Banner, SectionCard } from "@/components/admin/ui";
@@ -47,6 +47,15 @@ export default async function NichesPage({
                       {n._count.people === 1 ? "" : "s"}
                     </span>
                   </span>
+                  {n.latitude !== null && n.longitude !== null && (
+                    // Indicador, no enlace: la fila entera ya es un enlace y
+                    // anidar uno dentro de otro es HTML inválido.
+                    <Map
+                      size={14}
+                      className="shrink-0 text-accent"
+                      aria-label="Tiene ubicación en el mapa"
+                    />
+                  )}
                   <ChevronRight size={16} className="shrink-0 text-muted" />
                 </Link>
               </li>

@@ -2,21 +2,33 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Building2, Grid3x3, Users } from "lucide-react";
+import { Building2, Grid3x3, ShieldCheck, Users } from "lucide-react";
 
-const sections = [
+const baseSections = [
   { href: "/admin/cemeteries", label: "Cementerios", icon: Building2 },
   { href: "/admin/niches", label: "Lugares", icon: Grid3x3 },
   { href: "/admin/people", label: "Personas", icon: Users },
 ] as const;
 
+const usersSection = {
+  href: "/admin/users",
+  label: "Usuarios",
+  icon: ShieldCheck,
+} as const;
+
 /**
  * Menú principal del panel. Marca la sección abierta comparando con la ruta
  * actual, incluidas las páginas de detalle: estando en /admin/people/<id> la
  * pestaña Personas sigue resaltada.
+ *
+ * Ocultar "Usuarios" a quien no es ADMIN es solo cosmético; quien acceda a la
+ * ruta igual rebota contra `requireAdmin()` en la propia página.
  */
-export function AdminNav() {
+export function AdminNav({ canManageUsers }: { canManageUsers: boolean }) {
   const pathname = usePathname();
+  const sections = canManageUsers
+    ? [...baseSections, usersSection]
+    : baseSections;
 
   return (
     <nav className="flex gap-1">

@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { Building2, ChevronRight, Grid3x3, Users } from "lucide-react";
+import { Building2, ChevronRight, Grid3x3, ShieldCheck, Users } from "lucide-react";
 import { prisma } from "@/lib/prisma";
 import { requireUser } from "@/lib/auth";
 import { Banner } from "@/components/admin/ui";
@@ -16,10 +16,13 @@ export default async function AdminDashboard({
   const session = await requireUser("/admin");
   const sp = await searchParams;
 
-  const [cemeteries, niches, people] = await Promise.all([
+  const isAdmin = session.role === "ADMIN";
+
+  const [cemeteries, niches, people, users] = await Promise.all([
     prisma.cemetery.count(),
     prisma.niche.count(),
     prisma.person.count(),
+    isAdmin ? prisma.user.count() : Promise.resolve(0),
   ]);
 
   const sections = [
@@ -44,6 +47,17 @@ export default async function AdminDashboard({
       count: people,
       description: "Biografía, fechas, fotos, redes y homenajes.",
     },
+    ...(isAdmin
+      ? [
+          {
+            href: "/admin/users",
+            label: "Usuarios",
+            icon: ShieldCheck,
+            count: users,
+            description: "Quién entra al panel y con qué permisos.",
+          },
+        ]
+      : []),
   ];
 
   return (
@@ -57,7 +71,7 @@ export default async function AdminDashboard({
         <p className="mt-1 text-sm text-muted">¿Con qué querés trabajar?</p>
       </div>
 
-      <div className="grid gap-4 sm:grid-cols-3">
+      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
         {sections.map(({ href, label, icon: Icon, count, description }) => (
           <Link
             key={href}
