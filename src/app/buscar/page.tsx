@@ -10,6 +10,7 @@ import { SearchForm } from "@/components/SearchForm";
 import { PersonCard } from "@/components/PersonCard";
 import { AmbientGlow } from "@/components/AmbientGlow";
 import { photoSelect } from "@/lib/photos";
+import { encodeNicheToken } from "@/lib/niche-token";
 
 export const dynamic = "force-dynamic";
 
@@ -48,7 +49,7 @@ async function search(query: string) {
     where: { code: { equals: query, mode: "insensitive" } },
     select: { code: true },
   });
-  if (exact) redirect(`/n/${exact.code}`);
+  if (exact) redirect(`/n/${encodeNicheToken(exact.code)}`);
 
   const peopleIds = await findPeopleIds(query);
 
@@ -131,7 +132,7 @@ export default async function SearchPage({
                   <PersonCard
                     key={person.id}
                     person={person}
-                    nicheCode={person.niche.code}
+                    nicheCode={encodeNicheToken(person.niche.code)}
                   />
                 ))}
               </div>
@@ -147,7 +148,7 @@ export default async function SearchPage({
                 {results.niches.map((niche) => (
                   <Link
                     key={niche.id}
-                    href={`/n/${niche.code}`}
+                    href={`/n/${encodeNicheToken(niche.code)}`}
                     className="card-glass group flex items-center gap-4 rounded-2xl p-4 transition-all hover:-translate-y-0.5"
                   >
                     <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-accent/10">

@@ -8,6 +8,7 @@ import { formatCoordinates } from "@/lib/coordinates";
 import { createPerson, deleteNiche, updateNiche } from "@/lib/admin-actions";
 import { fullName } from "@/lib/format";
 import { peopleByDeathDate } from "@/lib/people";
+import { encodeNicheToken } from "@/lib/niche-token";
 import { Banner, Field, SectionCard, Textarea } from "@/components/admin/ui";
 import { ConfirmSubmit, SubmitButton } from "@/components/admin/actions-ui";
 
@@ -32,6 +33,8 @@ export default async function NicheAdminPage({
 
   if (!niche) notFound();
 
+  const publicToken = encodeNicheToken(niche.code);
+
   return (
     <div className="space-y-8">
       <Link
@@ -45,13 +48,13 @@ export default async function NicheAdminPage({
 
       <div className="flex flex-wrap gap-3">
         <Link
-          href={`/n/${niche.code}`}
+          href={`/n/${publicToken}`}
           className="inline-flex items-center gap-2 rounded-full border border-border px-4 py-2 text-sm hover:border-accent"
         >
           <User size={14} /> Ver página pública
         </Link>
         <Link
-          href={`/n/${niche.code}/qr`}
+          href={`/n/${publicToken}/qr`}
           className="inline-flex items-center gap-2 rounded-full border border-border px-4 py-2 text-sm hover:border-accent"
         >
           <QrCode size={14} /> Código QR

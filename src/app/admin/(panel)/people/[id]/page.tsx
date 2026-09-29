@@ -12,6 +12,7 @@ import {
   updatePerson,
 } from "@/lib/admin-actions";
 import { fullName } from "@/lib/format";
+import { encodeNicheToken } from "@/lib/niche-token";
 import { Banner, Field, SectionCard, Textarea } from "@/components/admin/ui";
 import {
   ConfirmSubmit,
@@ -61,7 +62,7 @@ export default async function PersonAdminPage({
 
       <div>
         <Link
-          href={`/n/${person.niche.code}/${person.id}`}
+          href={`/n/${encodeNicheToken(person.niche.code)}/${person.id}`}
           className="inline-flex items-center gap-2 rounded-full border border-border px-4 py-2 text-sm hover:border-accent"
         >
           <User size={14} /> Ver página conmemorativa

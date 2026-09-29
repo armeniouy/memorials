@@ -8,6 +8,7 @@ import { prisma } from "@/lib/prisma";
 import { SiteHeader } from "@/components/SiteHeader";
 import { SiteFooter } from "@/components/SiteFooter";
 import { QrPoster } from "@/components/QrPoster";
+import { decodeNicheToken } from "@/lib/niche-token";
 
 export const dynamic = "force-dynamic";
 
@@ -15,11 +16,13 @@ export const metadata: Metadata = {
   title: "Código QR del lugar",
 };
 
-async function getNicheUrl(code: string) {
-  const niche = await prisma.niche.findUnique({
-    where: { code },
-    include: { cemetery: true },
-  });
+/// Reutiliza el token ya presente en la URL: es el mismo que se va a imprimir
+/// en el QR, no hace falta generar uno nuevo.
+async function getNicheUrl(token: string) {
+  const code = decodeNicheToken(token);
+  if (!code) return null;
+
+  const niche = await prisma.niche.findUnique({ where: { code } });
   if (!niche) return null;
 
   const headerList = await headers();
@@ -27,7 +30,7 @@ async function getNicheUrl(code: string) {
   const protocol = host?.startsWith("localhost") ? "http" : "https";
   const origin = process.env.NEXT_PUBLIC_SITE_URL ?? `${protocol}://${host}`;
 
-  return { niche, url: `${origin}/n/${niche.code}` };
+  return { niche, url: `${origin}/n/${token}` };
 }
 
 export default async function NicheQrPage({
@@ -35,14 +38,14 @@ export default async function NicheQrPage({
 }: {
   params: Promise<{ code: string }>;
 }) {
-  const { code } = await params;
-  const result = await getNicheUrl(code);
+  const { code: token } = await params;
+  const result = await getNicheUrl(token);
   if (!result) notFound();
 
   const { niche, url } = result;
   const qrDataUrl = await QRCode.toDataURL(url, {
     margin: 1,
-    width: 720,
+    width: 1440,
     color: { dark: "#241f19", light: "#ffffff" },
   });
 
@@ -51,7 +54,7 @@ export default async function NicheQrPage({
       <SiteHeader breadcrumb={`Lugar ${niche.code}`} />
       <main className="flex flex-1 flex-col items-center justify-center gap-6 px-5 py-16 text-center">
         <Link
-          href={`/n/${niche.code}`}
+          href={`/n/${token}`}
           className="flex items-center gap-1.5 text-sm text-muted hover:text-accent"
         >
           <ArrowLeft size={14} /> Volver al lugar
@@ -68,12 +71,7 @@ export default async function NicheQrPage({
           </p>
         </div>
 
-        <QrPoster
-          code={niche.code}
-          cemeteryName={niche.cemetery.name}
-          url={url}
-          qrDataUrl={qrDataUrl}
-        />
+        <QrPoster code={niche.code} url={url} qrDataUrl={qrDataUrl} />
       </main>
       <SiteFooter />
     </div>

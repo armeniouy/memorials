@@ -16,10 +16,14 @@ import {
   fullName,
   lifespanYears,
 } from "@/lib/format";
+import { decodeNicheToken } from "@/lib/niche-token";
 
 export const dynamic = "force-dynamic";
 
-async function getPerson(code: string, personId: string) {
+async function getPerson(token: string, personId: string) {
+  const code = decodeNicheToken(token);
+  if (!code) return null;
+
   const person = await prisma.person.findUnique({
     where: { id: personId },
     include: {
@@ -47,8 +51,8 @@ export async function generateMetadata({
 }: {
   params: Promise<{ code: string; personId: string }>;
 }): Promise<Metadata> {
-  const { code, personId } = await params;
-  const person = await getPerson(code, personId);
+  const { code: token, personId } = await params;
+  const person = await getPerson(token, personId);
   if (!person) return { title: "No encontrado" };
   return {
     title: fullName(person),
@@ -61,8 +65,8 @@ export default async function PersonPage({
 }: {
   params: Promise<{ code: string; personId: string }>;
 }) {
-  const { code, personId } = await params;
-  const person = await getPerson(code, personId);
+  const { code: token, personId } = await params;
+  const person = await getPerson(token, personId);
 
   if (!person) notFound();
 
@@ -88,10 +92,10 @@ export default async function PersonPage({
         <section className="border-b border-border/80 px-5 py-16">
           <div className="mx-auto flex max-w-2xl flex-col items-center gap-5 text-center">
             <Link
-              href={`/n/${code}`}
+              href={`/n/${token}`}
               className="flex items-center gap-1.5 text-sm text-muted hover:text-accent"
             >
-              <ArrowLeft size={14} /> Volver al lugar {code}
+              <ArrowLeft size={14} /> Volver al lugar {person.niche.code}
             </Link>
 
             <PersonAvatar
@@ -198,7 +202,7 @@ export default async function PersonPage({
                 {siblings.map((sib) => (
                   <Link
                     key={sib.id}
-                    href={`/n/${code}/${sib.id}`}
+                    href={`/n/${token}/${sib.id}`}
                     className="card-glass rounded-full px-4 py-2 text-sm hover:text-accent"
                   >
                     {fullName(sib)}

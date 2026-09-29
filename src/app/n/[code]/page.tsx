@@ -10,6 +10,7 @@ import { MapLink } from "@/components/MapLink";
 import { AmbientGlow } from "@/components/AmbientGlow";
 import { photoSelect } from "@/lib/photos";
 import { peopleByDeathDate } from "@/lib/people";
+import { decodeNicheToken } from "@/lib/niche-token";
 
 export const dynamic = "force-dynamic";
 
@@ -18,7 +19,12 @@ export const dynamic = "force-dynamic";
 const cemeteryBadge =
   "inline-flex items-center gap-1.5 rounded-full border border-border px-3 py-1 font-technical text-xs uppercase tracking-wider text-muted";
 
-async function getNiche(code: string) {
+/// `token` es el código del nicho encriptado, tal como viaja en la URL
+/// pública y en el QR: así no se puede pasar de un lugar a otro cambiando el
+/// parámetro a mano, hay que haber escaneado el QR de ese nicho.
+async function getNiche(token: string) {
+  const code = decodeNicheToken(token);
+  if (!code) return null;
   return prisma.niche.findUnique({
     where: { code },
     include: {
@@ -38,8 +44,8 @@ export async function generateMetadata({
 }: {
   params: Promise<{ code: string }>;
 }): Promise<Metadata> {
-  const { code } = await params;
-  const niche = await getNiche(code);
+  const { code: token } = await params;
+  const niche = await getNiche(token);
   if (!niche) return { title: "Lugar no encontrado" };
   return {
     title: `Lugar ${niche.code} · ${niche.cemetery.name}`,
@@ -52,8 +58,8 @@ export default async function NichePage({
 }: {
   params: Promise<{ code: string }>;
 }) {
-  const { code } = await params;
-  const niche = await getNiche(code);
+  const { code: token } = await params;
+  const niche = await getNiche(token);
 
   if (!niche) notFound();
 
@@ -114,7 +120,7 @@ export default async function NichePage({
             </h2>
             <div className="space-y-3">
               {niche.people.map((person) => (
-                <PersonCard key={person.id} person={person} nicheCode={niche.code} />
+                <PersonCard key={person.id} person={person} nicheCode={token} />
               ))}
             </div>
             {niche.people.length === 0 && (
@@ -126,7 +132,7 @@ export default async function NichePage({
 
           <div className="mt-14 text-center">
             <Link
-              href={`/n/${niche.code}/qr`}
+              href={`/n/${token}/qr`}
               className="inline-flex items-center gap-2 text-sm text-muted hover:text-accent"
             >
               <QrCode size={15} /> Ver código QR de este lugar
